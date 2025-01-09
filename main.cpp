@@ -3,25 +3,24 @@
 #include <GL/glut.h>
 #include <math.h>
 
+// ======================Deklarasi variabel global=================================
 GLfloat cameraX = 0.0f, cameraY = 0.0f, cameraZ = 10.0f;  // Posisi kamera
 GLfloat cameraZoom = 10.0f;  // Jarak zoom kamera
 GLfloat cameraAngleX = 0.0f; // Rotasi kamera pada sumbu X
 GLfloat cameraAngleY = 0.0f; // Rotasi kamera pada sumbu Y
-
 GLfloat targetX = 0.0f, targetY = 0.0f, targetZ = 0.0f;
-// Variabel global untuk rotasi setiap objek
 static int rotasimerkurius=0, Merkurius=0, rotasivenus=0, Venus=0, 
            rotasibumi=0, Bumi=0, Bulan=0, rotasimars=0, Mars=0, rotasijupiter=0, Jupiter=0, 
-           rotasisaturnus=0, Saturnus=0, rotasiuranus=0, Uranus=0, rotasineptunus=0, Neptunus=0, z=0, B=0, b=0, c=0;
+           rotasisaturnus=0, Saturnus=0, rotasiuranus=0, Uranus=0, rotasineptunus=0, Neptunus=0;
 GLfloat diffuseMaterial[4] = {0.5, 0.5, 0.5, 1.0}; // Material diffuse untuk pencahayaan
 bool hidden = false;
 bool showOrbits = false;  // Variabel untuk menampilkan atau menyembunyikan orbit
 
+// ======================Fungsi utilitas=================================
 
 // Deklarasi fungsi untuk menyembunyikan atau menampilkan sumbu Cartesian
 void hiddenCarte();
 
-// Fungsi untuk menggambar sumbu Cartesian 3D (x, y, z)
 void drawCartecius()
 {
     glColor3f(255.0, 255.0, 255.0); // Mengatur warna hitam untuk sumbu
@@ -41,43 +40,6 @@ void drawCartecius()
 
     glEnd(); // Mengakhiri gambar garis
 }
-
-void TimerFunction(int value) {
-
-    rotasimerkurius = (rotasimerkurius + 1) % 360; Merkurius = (Merkurius + 12) % 360;
-    rotasivenus = (rotasivenus + 1) % 360; Venus = (Venus + 10) % 360;
-    rotasibumi = (rotasibumi + 2) % 360; Bumi = (Bumi + 8) % 360;
-    rotasimars = (rotasimars + 3) % 360; Mars = (Mars + 6) % 360;
-    rotasijupiter = (rotasijupiter + 4) % 360; Jupiter = (Jupiter + 4) % 360;
-    rotasisaturnus = (rotasisaturnus + 4) % 360; Saturnus = (Saturnus + 3) % 360;
-    rotasiuranus = (rotasiuranus + 3) % 360; Uranus = (Uranus + 2) % 360;
-    rotasineptunus = (rotasineptunus + 3) % 360; Neptunus = (Neptunus + 1) % 360;
-    Bulan=(Bulan+5)%360;
-    c = (c + 1) % 360;
-    
-    
-	glShadeModel(GL_SMOOTH);
-    glutPostRedisplay();
-    glutTimerFunc(2500/60, TimerFunction, 1);
-}
-
-// Fungsi inisialisasi
-void myinit(void) {
-    glClearColor(0.0, 0.0, 0.0, 0.0); // Warna latar belakang hitam
-    glShadeModel(GL_SMOOTH);          // Smooth shading
-    glEnable(GL_DEPTH_TEST);          // Aktifkan depth test
-    GLfloat mat_specular[] = {1.0, 1.0, 1.0, 1.0};
-    GLfloat light_position[] = {1.0, 1.0, 1.0, 0.0};
-    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseMaterial);
-    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
-    glMaterialf(GL_FRONT, GL_SHININESS, 25.0);
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
-    glColorMaterial(GL_FRONT, GL_DIFFUSE);
-    glEnable(GL_COLOR_MATERIAL);
-}
-
 
 void DrawStars() {
     glDisable(GL_LIGHTING);
@@ -102,9 +64,26 @@ void DrawOrbitRing(GLfloat radius) {
     }
     glEnd(); // Akhiri menggambar
     glLineWidth(1.0f); // Atur ketebalan garis orbit
-
 }
 
+// ======================Fungsi inisialisasi=================================
+void myinit(void) {
+    glClearColor(0.0, 0.0, 0.0, 0.0); // Warna latar belakang hitam
+    glShadeModel(GL_SMOOTH);          // Smooth shading
+    glEnable(GL_DEPTH_TEST);          // Aktifkan depth test
+    GLfloat mat_specular[] = {1.0, 1.0, 1.0, 1.0};
+    GLfloat light_position[] = {1.0, 1.0, 1.0, 0.0};
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuseMaterial);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialf(GL_FRONT, GL_SHININESS, 25.0);
+    // glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+    glColorMaterial(GL_FRONT, GL_DIFFUSE);
+    glEnable(GL_COLOR_MATERIAL);
+}
+
+// ======================Fungsi rendering utama=================================
 void display(void)
 {
 GLfloat position[]={0.0,0.0,1.5,1.0}; // Posisi dinamis sumber cahaya.
@@ -116,13 +95,10 @@ GLfloat eyeY = cameraY + cameraZoom * sin(cameraAngleX * M_PI / 180.0f);
 GLfloat eyeZ = cameraZ + cameraZoom * cos(cameraAngleY * M_PI / 180.0f) * cos(cameraAngleX * M_PI / 180.0f);
 gluLookAt(eyeX, eyeY, eyeZ, targetX, targetY, targetZ, 0.0f, 1.0f, 0.0f);
 
-
 hiddenCarte();
-
 
 glColor3f(1.0,0.5,0.0); // Mengatur warna matahari.
 glPushMatrix(); // Menyimpan matriks transformasi saat ini.
-glRotatef((GLfloat)z,1.0,1.0,1.0); 
 DrawStars();// Mengatur rotasi matahari.
 glLightfv(GL_LIGHT0,GL_POSITION,position); // Memperbarui posisi sumber cahaya.
 glDisable(GL_LIGHTING); // Menonaktifkan pencahayaan agar matahari tetap terang.
@@ -130,7 +106,7 @@ glutSolidSphere(0.8,40,50);   //draw sun/ // Menggambar matahari sebagai bola pa
 glPopMatrix(); // Mengembalikan matriks transformasi sebelumnya.
 
 // Jika showOrbits true, gambar orbit
-    if (showOrbits) {
+if (showOrbits) {
         glDisable(GL_LIGHTING); // Nonaktifkan pencahayaan untuk orbit agar terlihat jelas
         glColor3f(0.5f, 0.5f, 0.5f); // Warna orbit (abu-abu)
         DrawOrbitRing(1.5f); // Orbit Merkurius
@@ -143,7 +119,6 @@ glPopMatrix(); // Mengembalikan matriks transformasi sebelumnya.
         DrawOrbitRing(11.0f); // Orbit Neptunus
         glEnable(GL_LIGHTING); // Aktifkan kembali pencahayaan
     }
-
 
 glPushMatrix(); // Menyimpan matriks transformasi.
 glLightfv(GL_LIGHT0,GL_POSITION,position);
@@ -232,7 +207,6 @@ glVertex3f(sin(i*3.1416/180)*0.7, cos(i*3.1416/180)*0.7,0);
 glEnd();
 glPopMatrix();
 
-
 glPushMatrix(); // Untuk planet Neptunus.
 glRotatef ((GLfloat) Neptunus,0.0, 1.0, 0.0);
 glTranslatef (11.5, 0.0, 0.0);
@@ -241,22 +215,24 @@ glColor3f(1.0, 2.0, 0.0);
 glutSolidSphere(0.4, 20, 50);
 glPopMatrix();/* draw smaller planet Neptune */
 
-glPushMatrix(); // Menyimpan matriks transformasi saat ini ke dalam stack
-glRotatef ((GLfloat) c, 6.0, -14.0,-6.0); // Merotasi objek sebesar sudut 'c' di sepanjang sumbu yang diberikan
-glTranslatef (5.0,3.0,-1.0); // Mentranslasikan objek dengan nilai x, y, dan z yang ditentukan
-glScalef(0.60,0.0,2.5); // Menskalakan objek di sepanjang sumbu x, y, dan z
-glColor3f (7.5, 9.5, 2.0); // Mengatur warna objek dengan nilai RGB yang ditentukan
-glutSolidSphere (0.2, 12, 50); // Menggambar bola padat dengan radius 0.2, 12 irisan, dan 6 tumpukan
-glPopMatrix();//draw comet/ // Mengembalikan matriks transformasi sebelumnya dari stack (menggambar komet)
-
-glPushMatrix();
-glTranslatef(8.7,9.0,0.0);
-gluLookAt(0.0,10.0,2.0,1.0,0.0,0.0,0.0,0.0,1.0);
-//glRotatef((GLfloat)b,1.0,7.0,5.0);
-glColor3f(4.3,3.5,1.0);
-glutSolidSphere(0.04,20,50);
-glPopMatrix();
 glutSwapBuffers(); // Menukar buffer untuk memperbarui tampilan pada layar
+}
+
+// ======================Fungsi event handling=================================
+void TimerFunction(int value) {
+    rotasimerkurius = (rotasimerkurius + 1) % 360; Merkurius = (Merkurius + 12) % 360;
+    rotasivenus = (rotasivenus + 1) % 360; Venus = (Venus + 10) % 360;
+    rotasibumi = (rotasibumi + 2) % 360; Bumi = (Bumi + 8) % 360;
+    rotasimars = (rotasimars + 3) % 360; Mars = (Mars + 6) % 360;
+    rotasijupiter = (rotasijupiter + 4) % 360; Jupiter = (Jupiter + 4) % 360;
+    rotasisaturnus = (rotasisaturnus + 4) % 360; Saturnus = (Saturnus + 3) % 360;
+    rotasiuranus = (rotasiuranus + 3) % 360; Uranus = (Uranus + 2) % 360;
+    rotasineptunus = (rotasineptunus + 3) % 360; Neptunus = (Neptunus + 1) % 360;
+    Bulan=(Bulan+5)%360;
+    
+	glShadeModel(GL_SMOOTH);
+    glutPostRedisplay();
+    glutTimerFunc(2500/60, TimerFunction, 1);
 }
 
 // Fungsi untuk menangani perubahan ukuran jendela
@@ -269,7 +245,6 @@ glLoadIdentity(); // Memuat identitas matriks untuk mengatur perspektif
 gluPerspective(60.0f, (GLfloat)w / (GLfloat)h, 1.0f, 100.0f); // Mengatur perspektif dengan FOV 60 derajat
 glMatrixMode(GL_MODELVIEW); // Mengatur mode matriks kembali ke model tampilan
 glLoadIdentity();
-
 }
 
 // Fungsi untuk menangani input dari keyboard
@@ -329,7 +304,7 @@ void hiddenCarte()
     }
 }
 
-// Fungsi utama program
+// ======================Fungsi Main=================================
 int main(int argc,char **argv)
 {
 glutInit(&argc,argv); // Inisialisasi GLUT dengan argumen dari command line
